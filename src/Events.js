@@ -6,7 +6,7 @@
  * https://sjaakpriester.nl
  */
 
-import { createDiv, setPixels, fn } from "./utils";
+import { createDiv, setPixels } from "./utils";
 
 export default function Events(content) {
     this.content = content;
@@ -60,7 +60,7 @@ Events.prototype = {
         let band = this.band,
             index = band.index,
             range = this.content.range,
-            pos = this.calcPos(event.start),
+            pos = this.calcPos(event, event.start),
             locale = this.widget.settings.locale,
             elmt, label, ttl, cls, strt, stp;
 
@@ -74,7 +74,7 @@ Events.prototype = {
                 elmt = document.createElement('div');
             
                 if (event.class) elmt.className = event.class;
-                elmt.innerHTML = fn(event.text).bind(event)();
+                elmt.innerHTML = event.text;
                 elmt.dataset.id = event.id;
 
                 if (event.stop) {         // duration event
@@ -87,15 +87,10 @@ Events.prototype = {
                     elmt.classList.add('d-event');
                 }
 
-                if (event.title) {
-                    elmt.title = fn(event.title).bind(this.widget)(event);
-                }
-                else {
-                    elmt.title = event.start.toLocaleString(locale, this.band.helpers.loc) + ttl;
-                }
-
+                elmt.title = event.title?event.title: event.start.toLocaleString(locale, this.band.helpers.loc) + ttl;
+                
                 if (event.afterRender) {
-                    event.afterRender(this.widget, elmt);
+                    event.afterRender.bind(this.widget)(event, elmt);
                 }
 
               /*  if (this.widget.settings.url || this.widget.settings.func) {
@@ -204,14 +199,18 @@ Events.prototype = {
         this.element.append(elmt);
     },
 
-    calcPos: function (date) {   // check for free line; if not available, return false
-        let x = this.content.calcLeft(date), i;
+    calcPos: function (event, date) {   // check for free line; if not available, return false
+        let x = this.content.calcLeft(date);
+        let i = event.line;
 
-        for (i = 0; i < this.nLines; i++) {
-            if (x >= this.lines[i]) {
-                break;
+        if (!i) {
+            for (i = 0; i < this.nLines; i++) {
+                if (x >= this.lines[i]) {
+                    break;
+                }
             }
         }
+
         return i >= this.nLines ? false : {
             left: x,    // left in pixel
             line: i
