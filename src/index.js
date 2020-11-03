@@ -51,12 +51,15 @@ const defaults = {
 	{
 	    size: '100%',
 	    scale: MONTH,
-	    interval: 60
+		interval: 60,
+		focusRange: {
+			start: function(cursor) {return null;},
+			stop: function(cursor) {return null;}
+		}
 	}
     ],
 
 	cursor: new Date(),
-	showCursor: false,
     rememberCursor: true,
     begin: null,
     end: null,

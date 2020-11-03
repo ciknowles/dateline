@@ -19,6 +19,8 @@ $dark-band-colors: $bc-dark;
 
 $event-col: darkslateblue;
 $dark-event-col: lightgreen;
+$cursor-col:transparentize(red, 0.7);
+$cursor-border-col:transparentize( red, 0.5);
 
 .d-dateline {
   $bcol: scale_color($event-col, $lightness: $dim-step);
@@ -117,7 +119,7 @@ $dark-event-col: lightgreen;
   cursor: ew-resize;
 }
 
-.d-markers, .d-events  {
+.d-markers, .d-events {
   position: absolute;
   width: 100%;
 }
@@ -129,6 +131,14 @@ $dark-event-col: lightgreen;
 
 .d-events {
   height: 100%;
+}
+
+.d-cursor {
+  position: absolute;
+  height: 100%;
+  background-color: $cursor-col ;
+  border:1;
+  border-color: $cursor-border-col;
 }
 
 .d-marker {

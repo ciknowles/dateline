@@ -9,6 +9,7 @@
 import Markers from './Markers';
 import Events from './Events';
 import {createDiv, setPixels} from "./utils";
+import FocusRanges from './FocusRanges';
 
 export default function Content(band)
 {
@@ -33,8 +34,9 @@ export default function Content(band)
 
     this.markers = new Markers(this);
     this.events = new Events(this);
+    this.focusranges = new FocusRanges(this);
 
-    el.append(this.markers.element, this.events.element);
+    el.append(this.markers.element, this.events.element, this.focusranges.element);
 
     this.element = el;
 }
@@ -48,6 +50,7 @@ Content.prototype = {
 
         this.markers.render();
         this.events.render();
+        this.focusranges.render();
 
         let limits = this.element.querySelectorAll('.d-limit');
         limits.forEach(v => { v.remove(); });
@@ -101,9 +104,14 @@ Content.prototype = {
             this.calcRange();
             this.render();
         }
+
+       
+
         setPixels(this.element, 'left', this.band.calcPixels(this.center - cursor)
             - (this.width - ww) / 2);
 
+        this.focusranges.render();
+        
         c = cursor.getTime();
         tau = this.band.calcMs(ww) / 2; // half rangeBox in msec
         this.visible.begin.setTime(c - tau);
