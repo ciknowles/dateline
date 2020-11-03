@@ -6,10 +6,9 @@
  * https://sjaakpriester.nl
  */
 
-import {createDiv, setPixels} from "./utils";
+import { createDiv, setPixels, fn } from "./utils";
 
-export default function Events(content)
-{
+export default function Events(content) {
     this.content = content;
     this.band = content.band;
     this.widget = content.widget;
@@ -21,7 +20,7 @@ export default function Events(content)
 }
 
 Events.prototype = {
-    render: function()  {
+    render: function () {
         let i, ev, events = this.widget.events,
             range = this.content.range,
 
@@ -36,13 +35,13 @@ Events.prototype = {
 
         this.nLines = Math.floor((this.element.clientHeight) / this.widget.lineHeight);
         this.lines = [];
-        for (i = 0; i < this.nLines; i++)   { this.lines.push(0); }
+        for (i = 0; i < this.nLines; i++) { this.lines.push(0); }
 
         this.topMargin = (this.element.clientHeight - this.nLines * this.widget.lineHeight) / 2;
 
-        for (i = 0; i < iBegin; i++)    {       // render Duration Events if they stop after rangeBox.begin
+        for (i = 0; i < iBegin; i++) {       // render Duration Events if they stop after rangeBox.begin
             ev = events[i];
-            if (ev.stop && ev.stop > range.begin)   {
+            if (ev.stop && ev.stop > range.begin) {
                 this.renderEvent(ev);
             }
         }
@@ -52,12 +51,12 @@ Events.prototype = {
         }
 
         this.overflows.forEach(v => {
-            let found = this.widget.events.findIndex(t => t === v );
+            let found = this.widget.events.findIndex(t => t === v);
             if (found > -1) this.widget.events.splice(found, 1);
         });
     },
 
-    renderNormalEvent: function(event)    {
+    renderNormalEvent: function (event) {
         let band = this.band,
             index = band.index,
             range = this.content.range,
@@ -67,32 +66,40 @@ Events.prototype = {
 
         if (pos) {                          // skip if no position available
 
-            if (event.elements[index])  {   // cached
+            if (event.elements[index]) {   // cached
                 elmt = event.elements[index];
             }
 
-            else    {
+            else {
                 elmt = document.createElement('div');
-                ttl = event.start.toLocaleString(locale, this.band.helpers.loc);
-
+            
                 if (event.class) elmt.className = event.class;
-                elmt.innerHTML = event.text;
+                elmt.innerHTML = fn(event.text).bind(event)();
                 elmt.dataset.id = event.id;
 
-                if (event.stop)   {         // duration event
-                    ttl += ' ... ' + event.stop.toLocaleString(locale, this.band.helpers.loc);
+                if (event.stop) {         // duration event
+                    ttl = ' ... ' + event.stop.toLocaleString(locale, this.band.helpers.loc);
 
                     elmt.classList.add('d-tape-event');
                     elmt.prepend(createDiv('d-tape'));
                 }
-                else    {                   // create new instant event
+                else {                   // create new instant event
                     elmt.classList.add('d-event');
                 }
 
-                elmt.title = ttl;
+                if (event.title) {
+                    elmt.title = fn(event.title).bind(this.widget)(event);
+                }
+                else {
+                    elmt.title = event.start.toLocaleString(locale, this.band.helpers.loc) + ttl;
+                }
 
-                if (this.widget.settings.url || this.widget.settings.func)   {
-                    ['touchstart', 'touchend', 'mousedown'].forEach( p => {
+                if (event.afterRender) {
+                    event.afterRender(this.widget, elmt);
+                }
+
+              /*  if (this.widget.settings.url || this.widget.settings.func) {
+                    ['touchstart', 'touchend', 'mousedown'].forEach(p => {
                         elmt.addEventListener(p, e => {
                             e.stopPropagation();    // prevent that Content handles event
                         });
@@ -101,11 +108,11 @@ Events.prototype = {
                     elmt.addEventListener('click', e => {
                         this.widget.hilight(e.target);
 
-			// redirect to new page
-			if (this.widget.settings.url && this.widget.settings.redirect) {
+                        // redirect to new page
+                        if (this.widget.settings.url && this.widget.settings.redirect) {
                             window.location = this.widget.settings.url + e.target.dataset.id;
-			} else {
-			    // show info bubble
+                        } else {
+                            // show info bubble
                             let rect = this.band.element.getBoundingClientRect();
                             let pos = {
                                 top: e.clientY - e.offsetY - rect.y,
@@ -114,28 +121,28 @@ Events.prototype = {
 
                             let bub = this.widget.bubble;
 
-			    bub.show(pos).setInfo(this.widget.settings.loading);
+                            bub.show(pos).setInfo(this.widget.settings.loading);
 
-			    if (this.widget.settings.url) {
-				// fill it with data via AJAX
-				let url = this.widget.settings.url + e.target.dataset.id,
-				    request = new XMLHttpRequest();
+                            if (this.widget.settings.url) {
+                                // fill it with data via AJAX
+                                let url = this.widget.settings.url + e.target.dataset.id,
+                                    request = new XMLHttpRequest();
 
-				request.open('GET', url, true);
+                                request.open('GET', url, true);
 
-				request.onloadend = function() {
+                                request.onloadend = function () {
                                     if (this.status >= 200 && this.status < 400) {
-					bub.setInfo(this.response);
+                                        bub.setInfo(this.response);
                                     }
-				};
-				request.send();
-			    } else {
-				// fill it with data from function
-				bub.setInfo(this.widget.settings.func(event));
-			    }
+                                };
+                                request.send();
+                            } else {
+                                // fill it with data from function
+                                bub.setInfo(this.widget.settings.func(event));
+                            }
                         }
                     });
-                }
+                }*/
 
                 event.elements[index] = elmt;   // cache
             }
@@ -149,7 +156,7 @@ Events.prototype = {
 
                 setPixels(elmt.firstChild, 'width', Math.max(band.calcPixels(stp - strt), 1));
 
-                if (event.post_start && event.post_start > strt)   {
+                if (event.post_start && event.post_start > strt) {
                     setPixels(elmt.firstChild, 'borderLeftWidth', band.calcPixels(event.post_start - strt));
                 }
                 if (event.pre_stop && event.pre_stop < stp) {
@@ -164,21 +171,21 @@ Events.prototype = {
 
             this.lines[pos.line] = pos.left + elmt.clientWidth;    // update line
         }
-        else    {
+        else {
             console.warn('Dateline overflow', event);
             this.overflows.push(event);
         }
     },
 
-    renderOverviewEvent: function(event)    {
+    renderOverviewEvent: function (event) {
 
         var index = this.band.index,
             elmt, strt, stp;
 
-        if (event.elements[index])  {   // cached
+        if (event.elements[index]) {   // cached
             elmt = event.elements[index];
         }
-        else    {
+        else {
             elmt = createDiv(event.stop ? 'd-tape-pin' : 'd-pin');
             event.elements[index] = elmt;   // cache
         }
@@ -190,17 +197,17 @@ Events.prototype = {
             setPixels(elmt, 'left', this.content.calcLeft(strt));
             setPixels(elmt, 'width', Math.max(this.band.calcPixels(stp - strt), 1));
         }
-        else    {               // instant event
+        else {               // instant event
             setPixels(elmt, 'left', this.content.calcLeft(event.start));
         }
 
         this.element.append(elmt);
     },
 
-    calcPos: function(date) {   // check for free line; if not available, return false
+    calcPos: function (date) {   // check for free line; if not available, return false
         let x = this.content.calcLeft(date), i;
 
-        for (i = 0; i < this.nLines; i++)   {
+        for (i = 0; i < this.nLines; i++) {
             if (x >= this.lines[i]) {
                 break;
             }

@@ -31,3 +31,10 @@ export function setPixels(element, prop, pxl)
 {
     element.style[prop] = pxl + 'px';
 }
+
+export function fn(obj) 
+{
+    if (!!(obj && obj.constructor && obj.call && obj.apply)) 
+        return obj;
+    return function() {return obj;}
+}

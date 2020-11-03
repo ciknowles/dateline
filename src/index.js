@@ -55,7 +55,8 @@ const defaults = {
 	}
     ],
 
-    cursor: new Date(),
+	cursor: new Date(),
+	showCursor: false,
     rememberCursor: true,
     begin: null,
     end: null,
