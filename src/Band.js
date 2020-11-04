@@ -342,7 +342,6 @@ Band.prototype = {
     },
 
  
-
     _helpers: [
         {   // 0, MILLISECOND
             ms: 1,

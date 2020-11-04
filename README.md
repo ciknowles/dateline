@@ -1,6 +1,18 @@
 Dateline 2.0
 ============
 
+This a fork of **Dateline**  [GitHub page](https://github.com/sjaakp/dateline).
+
+Additional features include:
+- bandclicked event
+- eventclicked event
+- FocusRange setting for a Band
+- line setting for an Event
+- style setting for an Event
+- Couple of bug fixes
+- Removed the `Bubble` functionality, use eventclicked event. I wanted to handle my own
+interaction.
+
 **Dateline** is a widget for date-related data. You can create interactive timelines, 
 which can be dragged by mouse, touch or keyboard, and displays events. 
 The movements of two or more timelines ('bands') are synchronized. 
@@ -144,6 +156,26 @@ with several overview bands below it.
 If it is `2`, every other division is displayed. 
 Default value is `1`, meaning that every division is displayed.
 
+#### focusRange ####
+
+*Optional*. This can be used to display a 'window' around the current cursor time. 
+Include a function for start and stop. This example is a window from the start of 
+the until the end.
+
+	focusRange: {
+				start: function (cursor) {
+					var d = new Date(cursor.getTime());
+					d.setHours(0, 0, 0, 0);
+					return d;
+				},
+				stop: function (cursor) {
+					var d = new Date(cursor.getTime());
+					d.setHours(23, 59, 59, 999);
+					return d;
+				}
+			}
+
+
 ## Events ##
 
 *Note that we're not talking about JavaScript events here!*
@@ -174,6 +206,10 @@ This can be a JavaScript [Date](https://developer.mozilla.org/en-US/docs/Web/Jav
 or a string that is recognized by [Date.parse()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse "MDN network").
 
 #### text ####
+
+The text (or actually, the HTML code) displayed on the timeline.
+
+#### title (v) ####
 
 The text (or actually, the HTML code) displayed on the timeline.
 
@@ -228,28 +264,6 @@ or a string that is recognized by `Date.parse()`. Default: `null`.
 
 *Optional*. The CSS height of **Dateline**. Default is `"320px"`.
 
-#### url ####
-
-*Optional*. The url **Dateline** uses when an event is clicked or tapped. 
-The url is concatenated with the value of the `id` property of the clicked event.
-
-If `false` (default), clicking or tapping an event has no effect.
-
-#### redirect ####
-
-*Optional*. `boolean`.
-
-- `true`: **Dateline** redirects the browser to the location set by `url`.
-- `false`: an Ajax call is made to `url`. **Dateline** displays the returned HTML 
-in a pop up 'bubble' near the event.
-
-Default is `false`.
-
-#### func ####
-
-*Optional*. The function **Dateline** uses when an event is clicked or tapped. 
-The function is called with the clicked event and should return HTML
-that is displayed in a pop up 'bubble' near the event.
 
 ## Property ##
 
@@ -282,6 +296,37 @@ One way to intercept the `datelinechange` event would be (using jQuery):
 	        $('#somewhere').text(e.detail.toString());
 	    }
     );
+
+#### bandclicked ####
+
+This JavaScript event is issued whenever a `band` is clicked or touched.
+The clicked datetime value is sent in the `detail` property of the event data
+as a JavaScript `Date` object.
+`this` context set to the band element
+
+One way to intercept the `bandclicked` event would be (using jQuery):
+
+	document.addEventListener('bandclicked', e => {
+	        $('#somewhere').text(e.detail.toString());
+	    }
+    );
+
+#### eventclicked ####
+
+This JavaScript event is issued whenever an `event` is clicked. 
+The event start value is sent in the `detail` property of the event data
+as a JavaScript `Date` object.
+The event object is sent in the `event` property of the event data
+The boundingRect is sent in the `boundingRect` property of the event data
+`this` context set to the event element
+ 
+One way to intercept the `eventclicked` event would be (using jQuery):
+
+	document.addEventListener('datelinechange', e => {
+	        $('#somewhere').text(e.detail.toString());
+	    }
+    );
+
 
 ## Iconizing events with Font Awesome ##
 
