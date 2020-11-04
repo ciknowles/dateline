@@ -82,6 +82,7 @@ $cursor-border-col:transparentize( red, 0.5);
   outline: none;
 }
 
+
 @for $i from 0 to length($band-colors)  {
   .d-band-#{$i} {
     $bcol: nth($band-colors, $i + 1);
@@ -175,7 +176,7 @@ $cursor-border-col:transparentize( red, 0.5);
   position: absolute;
   padding-right: 2.5em; // defines minimal distance between events on same line
   max-width: 30em;
-  overflow: hidden;
+  overflow: visible; //was hidden, not showing correctly for ranges
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
@@ -198,6 +199,7 @@ $cursor-border-col:transparentize( red, 0.5);
   padding-bottom: 3px;
 }
 
+
 .d-tape {
   position: absolute;
   bottom: 0;
@@ -214,14 +216,19 @@ $cursor-border-col:transparentize( red, 0.5);
   width: 1px;
   height: 6px;
   background-color: var(--fa-primary-color);
+  cursor: pointer;
 }
 
 .d-tape-pin  {
+  cursor: pointer;
   position: absolute;
   top: 30%;
   height: 2px;
   background-color: var(--fa-primary-color);
 }
+
+
+
 
 .d-indicator {
   $marg: 12px;

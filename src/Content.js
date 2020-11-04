@@ -36,7 +36,7 @@ export default function Content(band)
     this.events = new Events(this);
     this.focusranges = new FocusRanges(this);
 
-    el.append(this.markers.element, this.events.element, this.focusranges.element);
+    el.append(this.markers.element, this.focusranges.element, this.events.element);
 
     this.element = el;
 }
@@ -49,8 +49,8 @@ Content.prototype = {
             endDate = this.range.end;
 
         this.markers.render();
-        this.events.render();
         this.focusranges.render();
+        this.events.render();
 
         let limits = this.element.querySelectorAll('.d-limit');
         limits.forEach(v => { v.remove(); });
@@ -111,7 +111,7 @@ Content.prototype = {
             - (this.width - ww) / 2);
 
         this.focusranges.render();
-        
+
         c = cursor.getTime();
         tau = this.band.calcMs(ww) / 2; // half rangeBox in msec
         this.visible.begin.setTime(c - tau);

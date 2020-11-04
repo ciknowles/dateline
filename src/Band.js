@@ -72,7 +72,7 @@ function onTouchEnd(evt)
     else    {
         if (Math.abs(t.clientX - clientX) < 4 && Math.abs(t.clientY - clientY) < 4) {
             // we hardly moved, this is a click event
-            scope.click(t.clientX);
+            scope.click(evt, t.clientX);
         }
         else scope.endDrag();
     }
@@ -106,7 +106,7 @@ function onMouseUp(evt)
 {
     if (Math.abs(evt.clientX - clientX) < 4 && Math.abs(evt.clientY - clientY) < 4) {
         // we hardly moved, this is a click event
-        scope.click(evt.clientX);
+        scope.click(evt, evt.clientX);
     }
     else scope.endDrag();
     document.removeEventListener( 'mousemove', onMouseMove, false );
@@ -121,6 +121,12 @@ function onMouseDown(evt)
     document.addEventListener( 'mousemove', onMouseMove, false );
     document.addEventListener( 'mouseup', onMouseUp, false );
 }
+
+function onDoubleClick(evt)
+{
+    scope.dblclick(evt.clientX);   
+}
+
 
 export default function Band(widget, bandInfo, index)
 {
@@ -156,6 +162,8 @@ export default function Band(widget, bandInfo, index)
     el.addEventListener('touchend', onTouchEnd, false);
     el.addEventListener('touchcancel', onTouchCancel, false);
     el.addEventListener('mousedown', onMouseDown, false);
+    el.addEventListener('dblclick', onDoubleClick, false);
+    
 
     el.addEventListener('focus', e => {
         showElement(this.leftIndicator, this.rightIndicator);
@@ -222,6 +230,8 @@ export default function Band(widget, bandInfo, index)
     });
 
     this.element = el;
+
+
 }
 
 Band.prototype = {
@@ -313,10 +323,25 @@ Band.prototype = {
         this.widget.triggerChange();
     },
 
-    click: function(x)   {
+    click: function(evt, x)   {
+
+        //don't do anything unless the event div is clicked
+        if (evt.target != this.content.events.element) 
+            return;
+
+        let rect = this.element.getBoundingClientRect();
+        this.element.dispatchEvent(new CustomEvent( 'bandclicked', {
+            bubbles: true,
+            detail: new Date(this.content.visible.begin.getTime() + this.calcMs(x - rect.x))
+        } ));
+    },
+
+    dblclick: function(x)   {
         let rect = this.element.getBoundingClientRect();
         this.animateTo(this.content.visible.begin.getTime() + this.calcMs(x - rect.x));
     },
+
+ 
 
     _helpers: [
         {   // 0, MILLISECOND

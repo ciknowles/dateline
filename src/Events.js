@@ -74,6 +74,8 @@ Events.prototype = {
                 elmt = document.createElement('div');
             
                 if (event.class) elmt.className = event.class;
+                if (event.style) elmt.cssText = event.style;
+                
                 elmt.innerHTML = event.text;
                 elmt.dataset.id = event.id;
 
@@ -85,13 +87,21 @@ Events.prototype = {
                 }
                 else {                   // create new instant event
                     elmt.classList.add('d-event');
+                    ttl='';
                 }
 
                 elmt.title = event.title?event.title: event.start.toLocaleString(locale, this.band.helpers.loc) + ttl;
                 
-                if (event.afterRender) {
-                    event.afterRender.bind(this.widget)(event, elmt);
-                }
+                elmt.addEventListener('click', e => {
+                    let rect = this.band.element.getBoundingClientRect();
+                    elmt.dispatchEvent(new CustomEvent( 'eventclicked', {
+                        bubbles: true,
+                        detail: event.start,
+                        event: event,
+                        boundingRect: rect
+                    } ));
+                });
+              
 
               /*  if (this.widget.settings.url || this.widget.settings.func) {
                     ['touchstart', 'touchend', 'mousedown'].forEach(p => {
@@ -203,7 +213,7 @@ Events.prototype = {
         let x = this.content.calcLeft(date);
         let i = event.line;
 
-        if (!i) {
+        if (typeof i === undefined) {
             for (i = 0; i < this.nLines; i++) {
                 if (x >= this.lines[i]) {
                     break;
