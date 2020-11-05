@@ -217,6 +217,10 @@ The text (or actually, the HTML code) displayed on the timeline.
 
 *Optional*. The HTML-class(es) set to the event when it's displayed in normal layout.
 
+#### style ####
+
+*Optional*. Hack in a custom style to the event element when it's displayed in normal layout.
+
 ### Duration events ###
 
 Apart from the normal, *instant* events, **Dateline** also supports *duration* events. 
@@ -314,16 +318,13 @@ One way to intercept the `bandclicked` event would be (using jQuery):
 #### eventclicked ####
 
 This JavaScript event is issued whenever an `event` is clicked. 
-The event start value is sent in the `detail` property of the event data
-as a JavaScript `Date` object.
-The event object is sent in the `event` property of the event data
-The boundingRect is sent in the `boundingRect` property of the event data
-`this` context set to the event element
+The dateline event object is sent in the `detail` property of the event data.
+You can extract the .start and .id properties from this
  
 One way to intercept the `eventclicked` event would be (using jQuery):
 
 	document.addEventListener('datelinechange', e => {
-	        $('#somewhere').text(e.detail.toString());
+	        $('#somewhere').text(e.detail.start.toString());
 	    }
     );
 

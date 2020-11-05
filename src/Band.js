@@ -162,7 +162,8 @@ export default function Band(widget, bandInfo, index)
     el.addEventListener('touchend', onTouchEnd, false);
     el.addEventListener('touchcancel', onTouchCancel, false);
     el.addEventListener('mousedown', onMouseDown, false);
-    el.addEventListener('dblclick', onDoubleClick, false);
+    
+    this.content.events.element.addEventListener('dblclick', onDoubleClick, false);
     
 
     el.addEventListener('focus', e => {

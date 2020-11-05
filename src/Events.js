@@ -96,9 +96,7 @@ Events.prototype = {
                     let rect = this.band.element.getBoundingClientRect();
                     elmt.dispatchEvent(new CustomEvent( 'eventclicked', {
                         bubbles: true,
-                        detail: event.start,
-                        event: event,
-                        boundingRect: rect
+                        detail: event
                     } ));
                 });
               
@@ -205,6 +203,15 @@ Events.prototype = {
         else {               // instant event
             setPixels(elmt, 'left', this.content.calcLeft(event.start));
         }
+
+        elmt.addEventListener('click', e => {
+            let rect = this.band.element.getBoundingClientRect();
+            elmt.dispatchEvent(new CustomEvent( 'eventclicked', {
+                bubbles: true,
+                detail: event
+            } ));
+        });
+      
 
         this.element.append(elmt);
     },
