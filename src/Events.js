@@ -93,13 +93,10 @@ Events.prototype = {
                 elmt.title = event.title?event.title: event.start.toLocaleString(locale, this.band.helpers.loc) + ttl;
                 
                 elmt.addEventListener('click', e => {
-                    let rect = this.band.element.getBoundingClientRect();
-                    elmt.dispatchEvent(new CustomEvent( 'eventclicked', {
-                        bubbles: true,
-                        detail: event
-                    } ));
+                    e = new MouseEvent('eventclick', e);
+                    e.data = event;
+                    elmt.dispatchEvent(e);
                 });
-              
 
               /*  if (this.widget.settings.url || this.widget.settings.func) {
                     ['touchstart', 'touchend', 'mousedown'].forEach(p => {
@@ -205,13 +202,10 @@ Events.prototype = {
         }
 
         elmt.addEventListener('click', e => {
-            let rect = this.band.element.getBoundingClientRect();
-            elmt.dispatchEvent(new CustomEvent( 'eventclicked', {
-                bubbles: true,
-                detail: event
-            } ));
+            e = new MouseEvent('eventclick', e);
+            e.data = event;
+            elmt.dispatchEvent(e);
         });
-      
 
         this.element.append(elmt);
     },

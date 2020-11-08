@@ -331,10 +331,11 @@ Band.prototype = {
             return;
 
         let rect = this.element.getBoundingClientRect();
-        this.element.dispatchEvent(new CustomEvent( 'bandclicked', {
-            bubbles: true,
-            detail: new Date(this.content.visible.begin.getTime() + this.calcMs(x - rect.x))
-        } ));
+        
+        let new_event = new MouseEvent('bandclick', evt);
+        new_event.data = new Date(this.content.visible.begin.getTime() + this.calcMs(x - rect.x));
+        
+        this.element.dispatchEvent(new_event);
     },
 
     dblclick: function(x)   {

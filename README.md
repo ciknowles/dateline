@@ -301,30 +301,30 @@ One way to intercept the `datelinechange` event would be (using jQuery):
 	    }
     );
 
-#### bandclicked ####
+#### bandclick ####
 
 This JavaScript event is issued whenever a `band` is clicked or touched.
-The clicked datetime value is sent in the `detail` property of the event data
+The clicked datetime value is sent in the `data` property of the event data
 as a JavaScript `Date` object.
 `this` context set to the band element
 
-One way to intercept the `bandclicked` event would be (using jQuery):
+One way to intercept the `bandclick` event would be (using jQuery):
 
-	document.addEventListener('bandclicked', e => {
-	        $('#somewhere').text(e.detail.toString());
+	document.addEventListener('bandclick', e => {
+	        $('#somewhere').text(e.data.toString());
 	    }
     );
 
-#### eventclicked ####
+#### eventclick ####
 
 This JavaScript event is issued whenever an `event` is clicked. 
-The dateline event object is sent in the `detail` property of the event data.
+The dateline event object is sent in the `data` property of the event data.
 You can extract the .start and .id properties from this
  
-One way to intercept the `eventclicked` event would be (using jQuery):
+One way to intercept the `eventclick` event would be (using jQuery):
 
-	document.addEventListener('datelinechange', e => {
-	        $('#somewhere').text(e.detail.start.toString());
+	document.addEventListener('eventclick', e => {
+	        $('#somewhere').text(e.data.start.toString());
 	    }
     );
 
