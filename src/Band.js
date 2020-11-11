@@ -324,17 +324,22 @@ Band.prototype = {
         this.widget.triggerChange();
     },
 
+    calcMsFromPixels: function(x) {
+        let rect = this.element.getBoundingClientRect();
+        return this.content.visible.begin.getTime() + this.calcMs(x - rect.x);
+    },
+
     click: function(evt, x)   {
 
         //don't do anything unless the event div is clicked
         if (evt.target != this.content.events.element) 
             return;
-
-        let rect = this.element.getBoundingClientRect();
         
         let new_event = new MouseEvent('bandclick', evt);
-        new_event.data = new Date(this.content.visible.begin.getTime() + this.calcMs(x - rect.x));
-        
+        new_event.dateline = {
+            band: this,
+            dtm:  new Date(this.calcMsFromPixels(x))
+        };
         this.element.dispatchEvent(new_event);
     },
 

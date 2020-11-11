@@ -59,7 +59,9 @@ Events.prototype = {
     renderNormalEvent: function (event) {
         let band = this.band,
             index = band.index,
+            
             range = this.content.range,
+            
             pos = this.calcPos(event, event.start),
             locale = this.widget.settings.locale,
             elmt, label, ttl, cls, strt, stp;
@@ -94,9 +96,16 @@ Events.prototype = {
                 
                 elmt.addEventListener('click', e => {
                     e = new MouseEvent('eventclick', e);
-                    e.data = event;
+                    e.dateline = {
+                        event: event,
+                        dtm: new Date(band.calcMsFromPixels(e.x))
+                    };
                     elmt.dispatchEvent(e);
                 });
+
+               
+        
+                
 
               /*  if (this.widget.settings.url || this.widget.settings.func) {
                     ['touchstart', 'touchend', 'mousedown'].forEach(p => {
@@ -178,8 +187,8 @@ Events.prototype = {
     },
 
     renderOverviewEvent: function (event) {
-
-        var index = this.band.index,
+        let band = this.band,
+            index = this.band.index,
             elmt, strt, stp;
 
         if (event.elements[index]) {   // cached
@@ -203,7 +212,10 @@ Events.prototype = {
 
         elmt.addEventListener('click', e => {
             e = new MouseEvent('eventclick', e);
-            e.data = event;
+            e.dateline = {
+                event: event,
+                dtm: new Date(band.calcMsFromPixels(e.x))
+            };
             elmt.dispatchEvent(e);
         });
 

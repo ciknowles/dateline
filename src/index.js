@@ -238,10 +238,14 @@ Widget.prototype = {
     },
 
     triggerChange: function()   {
-	this.element.dispatchEvent(new CustomEvent( 'datelinechange', {
-	    bubbles: true,
-	    detail: new Date(this._cursor)
-	} ));
+
+	let ce =new CustomEvent( 'datelinechange', {
+			bubbles: true
+		});
+	ce.dateline = {dtm: new Date(this._cursor)};
+
+	this.element.dispatchEvent(ce);
+	
 	if (storageAvailable('sessionStorage')) {
 	    window.sessionStorage.setItem('dateline_' + this.id, this._cursor.getTime());  // cursor into session storage
 	}

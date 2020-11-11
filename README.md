@@ -291,43 +291,52 @@ the timeline(s) to it. *Return:* a plain JavaScript `Object` with the event data
 #### datelinechange ####
 
 This JavaScript event is issued whenever the `cursor` value is changed. 
-The current value is sent in the `detail` property of the event data
+The current value is sent in the `dateline.dtm` property of the event data
 as a JavaScript `Date` object.
 
 One way to intercept the `datelinechange` event would be (using jQuery):
 
 	document.addEventListener('datelinechange', e => {
-	        $('#somewhere').text(e.detail.toString());
+	        $('#somewhere').text(e.dateline.dtm.toString());
 	    }
     );
+
+Note: If you bind to the event using jquery .on('datelinechange') you will only be able to access
+the .dateline property of the evt.originalEvent!
 
 #### bandclick ####
 
 This JavaScript event is issued whenever a `band` is clicked or touched.
-The clicked datetime value is sent in the `data` property of the event data
+The clicked datetime value is sent in the `dateline.dtm` property of the event data
 as a JavaScript `Date` object.
-`this` context set to the band element
 
 One way to intercept the `bandclick` event would be (using jQuery):
 
 	document.addEventListener('bandclick', e => {
-	        $('#somewhere').text(e.data.toString());
+	        $('#somewhere').text(e.dateline.dtm.toString());
 	    }
     );
+
+Note: If you bind to the event using jquery .on('bandclick') you will only be able to access
+the .dateline property of the evt.originalEvent!
 
 #### eventclick ####
 
 This JavaScript event is issued whenever an `event` is clicked. 
-The dateline event object is sent in the `data` property of the event data.
-You can extract the .start and .id properties from this
+The dateline event object is sent in the `dateline.event` property of the event data.
+The clicked date and time is sent in the `dateline.dtm` property of the event data.
+
+You can extract the .start and .id properties from the `dateline.event`.
  
 One way to intercept the `eventclick` event would be (using jQuery):
 
 	document.addEventListener('eventclick', e => {
-	        $('#somewhere').text(e.data.start.toString());
+	        $('#somewhere').text(e.dateline.event.start.toString());
 	    }
     );
 
+Note: If you bind to the event using jquery .on('eventclick') you will only be able to access
+the .dateline property of the evt.originalEvent!
 
 ## Iconizing events with Font Awesome ##
 
